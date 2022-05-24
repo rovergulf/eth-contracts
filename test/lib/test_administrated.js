@@ -49,4 +49,10 @@ describe("Administrated", function () {
         await expect(erc20.connect(user2).transferOwnership(user2.address))
             .be.revertedWith("Administrated: caller is not an owner, nor admin");
     });
+
+    it("Should destroy contract instance", async () => {
+        const tx = await erc20.destroyInstance();
+        await tx.wait();
+        await expect(erc20.owner()).be.reverted;
+    });
 });
