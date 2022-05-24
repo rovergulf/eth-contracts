@@ -59,7 +59,7 @@ module.exports = {
             }
         }
     },
-    defaultNetwork: 'hardhat',
+    defaultNetwork: 'rinkeby',
     optimizer: true,
     networks: {
         hardhat: {
