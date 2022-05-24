@@ -9,7 +9,7 @@ abstract contract Administrated is Ownable {
     modifier adminAccess() {
         require(
             _msgSender() == owner() || _msgSender() == _defaultAdmin,
-            "Ownable: caller is not an owner, nor admin"
+            "Administrated: caller is not an owner, nor admin"
         );
         _;
     }

@@ -35,7 +35,7 @@ describe("Administrated", function () {
         expect(await erc20.owner()).to.equal(user3.address);
     });
 
-    it("Should confirm that user1 transferred and got back ownership back from new owner", async () => {
+    it("Should confirm that user1 transferred and got back ownership from new owner", async () => {
         const tx1 = await erc20.transferOwnership(user2.address)
         await tx1.wait();
 
@@ -43,5 +43,10 @@ describe("Administrated", function () {
         await tx2.wait();
 
         expect(await erc20.owner()).to.equal(user1.address);
+    });
+
+    it("Should reject transfer by non-owner", async () => {
+        await expect(erc20.connect(user2).transferOwnership(user2.address))
+            .be.revertedWith("Administrated: caller is not an owner, nor admin");
     });
 });
