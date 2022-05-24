@@ -6,9 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /// @custom:security-contact team@rovergulf.net
 contract DevERC777 is ERC777, Ownable {
-    constructor(
-        address[] memory defaultOperators_
-    ) ERC777("DevERC777", "RET7", defaultOperators_) {}
+    constructor(address[] memory defaultOperators_) ERC777("DevERC777", "RET7", defaultOperators_) {}
 
     function mint(
         address to,

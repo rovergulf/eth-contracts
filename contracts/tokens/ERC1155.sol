@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 //import "@openzeppelin/contracts/access/Ownable.sol"; // replaced by Administrated.sol
-import "./lib/Administrated.sol";
+import "../lib/Administrated.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
