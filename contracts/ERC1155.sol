@@ -12,6 +12,8 @@ contract DevERC1155 is ERC1155, Administrated, ERC1155Burnable, ERC1155Supply {
 
     constructor() ERC1155("") {}
 
+    string private _contractUri;
+
     function name() public pure returns (string memory) {
         return "DevERC1155 Token";
     }
@@ -22,6 +24,14 @@ contract DevERC1155 is ERC1155, Administrated, ERC1155Burnable, ERC1155Supply {
 
     function setURI(string memory newUri) public adminAccess {
         _setURI(newUri);
+    }
+
+    function setContractUrl(string memory newUrl) public adminAccess {
+        _contractUri = newUrl;
+    }
+
+    function contractUrl() public view returns (string memory) {
+        return _contractUri;
     }
 
     function mint(

@@ -14,6 +14,9 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract DevERC721 is ERC721, ERC721Enumerable, ERC721Burnable, Administrated, EIP712, ERC721Votes {
     using Counters for Counters.Counter;
 
+    string private _baseUri;
+    string private _contractUri;
+
     Counters.Counter private _tokenIdCounter;
 
     event Mint(address to, uint256 tokenId);
@@ -27,28 +30,41 @@ contract DevERC721 is ERC721, ERC721Enumerable, ERC721Burnable, Administrated, E
         emit Mint(to, tokenId);
     }
 
-    // The following functions are overrides required by Solidity.
+    function setContractUrl(string memory newUrl) public adminAccess {
+        _contractUri = newUrl;
+    }
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
-    internal
-    override(ERC721, ERC721Enumerable)
-    {
+    function contractUrl() public view returns (string memory) {
+        return _contractUri;
+    }
+
+    function setBaseUrl(string memory newUrl) public adminAccess {
+        _baseUri = newUrl;
+    }
+
+    function _baseURI() internal view override returns (string memory) {
+        return _baseUri;
+    }
+
+
+    // The following functions are overrides required by Solidity.
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override(ERC721, ERC721Enumerable) {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    function _afterTokenTransfer(address from, address to, uint256 tokenId)
-    internal
-    override(ERC721, ERC721Votes)
-    {
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override(ERC721, ERC721Votes) {
         super._afterTokenTransfer(from, to, tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId)
-    public
-    view
-    override(ERC721, ERC721Enumerable)
-    returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721Enumerable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
