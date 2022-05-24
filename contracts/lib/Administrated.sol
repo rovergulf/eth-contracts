@@ -21,4 +21,8 @@ abstract contract Administrated is Ownable {
     function defaultAdmin() public view returns (address) {
         return _defaultAdmin;
     }
+
+    function transferOwnership(address newOwner) public virtual override adminAccess {
+        super._transferOwnership(newOwner);
+    }
 }
