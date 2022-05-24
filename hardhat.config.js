@@ -13,8 +13,7 @@ const {
     TEST_PK3, // additional test wallet key
     // ---
     // gas report
-    REPORT_CURRENCY = false,
-    REPORT_GAS = false, // include gas reports into tests
+    REPORT_CURRENCY,
     // coinmarketcap.com api key
     COINMARKETCAP_API_KEY,
     // block explorers
@@ -100,7 +99,7 @@ module.exports = {
             url: BSC_API_URL,
             accounts: [`0x${PRIVATE_KEY}`],
         },
-        bscTest: {
+        bscTestnet: {
             url: BSCTEST_API_URL,
             accounts: [`0x${PRIVATE_KEY}`],
         },
@@ -127,7 +126,7 @@ module.exports = {
         artifacts: "./artifacts"
     },
     gasReporter: {
-        enabled: !!REPORT_GAS,
+        enabled: true,
         // lets inspect how much will it cost in the currency below the key
         coinmarketcap: REPORT_CURRENCY ? COINMARKETCAP_API_KEY : '',
         currency: 'USD',
