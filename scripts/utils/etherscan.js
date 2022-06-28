@@ -4,7 +4,7 @@ const {run} = require("hardhat");
 
 async function getDevSigners() {
     const signers = await hre.ethers.getSigners();
-    const [deployer] = signers[0]
+    const deployer = signers[0];
     const chainId = await deployer.getChainId();
     return {
         deployer, chainId,

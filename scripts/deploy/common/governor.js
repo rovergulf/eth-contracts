@@ -2,7 +2,7 @@ const hre = require("hardhat");
 const {deploy, getDevSigners} = require("../../utils/etherscan");
 
 const rinkebyAddrs = require('../../chains/rinkeby/tokens');
-// const bsctestAddrs = require('../../chains/bsctest/tokens');
+const bsctestAddrs = require('../../chains/bsctest/tokens');
 
 async function main() {
     const {chainId} = await getDevSigners();
@@ -12,6 +12,9 @@ async function main() {
     switch (chainId) {
         case 4:
             erc20VotesAddress = rinkebyAddrs.erc20;
+            break;
+        case 97:
+            erc20VotesAddress = bsctestAddrs.erc20;
             break;
         default:
             console.log(`Unsupported chain id: ${chainId}`);
