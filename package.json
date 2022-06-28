@@ -4,7 +4,8 @@
   "scripts": {
     "test": "npx hardhat test",
     "coverage": "npx hardhat coverage",
-    "compile": "npx hardhat copmile"
+    "compile": "npx hardhat copmile",
+    "start": "npx hardhat node"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
