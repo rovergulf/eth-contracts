@@ -2,15 +2,14 @@ require('dotenv').config();
 require('@nomiclabs/hardhat-waffle');
 require('@nomiclabs/hardhat-ethers');
 require("@nomiclabs/hardhat-etherscan");
+require('hardhat-abi-exporter');
+require("@nomiclabs/hardhat-web3");
 require("hardhat-gas-reporter");
 require('solidity-coverage');
 
 const {
     // cannot be shared
-    PRIVATE_KEY, // mainnet/testnet deployer key
-    TEST_PK1, // additional test wallet key
-    TEST_PK2, // additional test wallet key
-    TEST_PK3, // additional test wallet key
+    PRIVATE_KEY, // mainnet/testnet deployer keykey
     // ---
     // gas report
     REPORT_CURRENCY,
@@ -23,9 +22,9 @@ const {
     BSCSCAN_API_KEY,
     // providers urls
     MAINNET_API_URL,
-    RINKEBY_API_URL,
+    SEPOLIA_API_URL,
     OPTIMISM_API_URL,
-    KOVAN_API_URL = 'https://kovan.infura.io/v3/',
+    GOERLI_API_URL,
     POLYGON_API_URL,
     MUMBAI_API_URL,
     BSC_API_URL,
@@ -70,54 +69,54 @@ module.exports = {
         // ethereum
         mainnet: {
             url: MAINNET_API_URL,
-            accounts: [`0x${PRIVATE_KEY}`],
+            accounts: [PRIVATE_KEY]
         },
-        rinkeby: {
-            url: RINKEBY_API_URL,
-            accounts: [`0x${PRIVATE_KEY}`],
+        sepolia: {
+            url: SEPOLIA_API_URL,
+            accounts: [PRIVATE_KEY]
         },
         // optimism
         optimistic: {
             url: OPTIMISM_API_URL,
-            accounts: [`0x${PRIVATE_KEY}`],
+            accounts: [PRIVATE_KEY]
         },
-        kovan: {
-            url: KOVAN_API_URL,
-            accounts: [`0x${PRIVATE_KEY}`],
+        goerli: {
+            url: GOERLI_API_URL,
+            accounts: [PRIVATE_KEY]
         },
         // polygon
         polygon: {
             url: POLYGON_API_URL,
-            accounts: [`0x${PRIVATE_KEY}`],
+            accounts: [PRIVATE_KEY]
         },
         mumbai: {
             url: MUMBAI_API_URL,
-            accounts: [`0x${PRIVATE_KEY}`],
+            accounts: [PRIVATE_KEY]
         },
         // binance smart chain
         bsc: {
             url: BSC_API_URL,
-            accounts: [`0x${PRIVATE_KEY}`],
+            accounts: [PRIVATE_KEY]
         },
         bscTestnet: {
             url: BSCTEST_API_URL,
-            accounts: [`0x${PRIVATE_KEY}`],
-        },
+            accounts: [PRIVATE_KEY]
+        }
     },
     etherscan: {
         apiKey: {
             mainnet: ETHERSCAN_API_KEY,
-            rinkeby: ETHERSCAN_API_KEY,
+            // sepolia: ETHERSCAN_API_KEY,
             // optimism
             // optimistic: OPTIMISMSCAN_API_KEY,
-            kovan: OPTIMISMSCAN_API_KEY,
+            goerli: ETHERSCAN_API_KEY,
             // binance smart chain
             bsc: BSCSCAN_API_KEY,
             bscTestnet: BSCSCAN_API_KEY,
             // polygon
             polygon: POLYGONSCAN_API_KEY,
-            polygonMumbai: POLYGONSCAN_API_KEY,
-        },
+            polygonMumbai: POLYGONSCAN_API_KEY
+        }
     },
     paths: {
         sources: "./contracts",
@@ -129,6 +128,14 @@ module.exports = {
         enabled: true,
         // lets inspect how much will it cost in the currency below the key
         coinmarketcap: REPORT_CURRENCY ? COINMARKETCAP_API_KEY : '',
-        currency: 'USD',
+        currency: 'USD'
     },
+    abiExporter: {
+        path: './abi',
+        runOnCompile: true,
+        clear: true,
+        flat: true,
+        spacing: 2,
+        pretty: true
+    }
 };
