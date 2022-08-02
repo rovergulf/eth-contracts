@@ -55,19 +55,19 @@ function buildConfig() {
     const networks = {};
 
     // ethereum
-    if (MAINNET_API_URL.length) {
+    if (MAINNET_API_URL?.length) {
         networks.mainnet = {
             url: MAINNET_API_URL,
             accounts: [PRIVATE_KEY]
         };
     }
-    if (SEPOLIA_API_URL.length) {
+    if (SEPOLIA_API_URL?.length) {
         networks.sepolia = {
             url: SEPOLIA_API_URL,
             accounts: [PRIVATE_KEY]
         };
     }
-    if (GOERLI_API_URL.length) {
+    if (GOERLI_API_URL?.length) {
         networks.goerli = {
             url: GOERLI_API_URL,
             accounts: [PRIVATE_KEY]
@@ -75,7 +75,7 @@ function buildConfig() {
     }
 
     // optimism
-    if (OPTIMISM_API_URL.length) {
+    if (OPTIMISM_API_URL?.length) {
         networks.optimism = {
             url: OPTIMISM_API_URL,
             accounts: [PRIVATE_KEY]
@@ -83,13 +83,13 @@ function buildConfig() {
     }
 
     // binance smart chain
-    if (BSC_API_URL.length) {
+    if (BSC_API_URL?.length) {
         networks.bsc = {
             url: BSC_API_URL,
             accounts: [PRIVATE_KEY]
         };
     }
-    if (BSCTEST_API_URL.length) {
+    if (BSCTEST_API_URL?.length) {
         networks.bscTestnet = {
             url: BSCTEST_API_URL,
             accounts: [PRIVATE_KEY]
@@ -97,13 +97,13 @@ function buildConfig() {
     }
 
     // polygon
-    if (POLYGON_API_URL.length) {
+    if (POLYGON_API_URL?.length) {
         networks.polygon = {
             url: POLYGON_API_URL,
             accounts: [PRIVATE_KEY]
         };
     }
-    if (MUMBAI_API_URL.length) {
+    if (MUMBAI_API_URL?.length) {
         networks.polygonMumbai = {
             url: MUMBAI_API_URL,
             accounts: [PRIVATE_KEY]
@@ -117,16 +117,16 @@ function buildConfig() {
     const etherscan = {
         apiKey: {}
     };
-    if (ETHERSCAN_API_KEY.length) {
+    if (ETHERSCAN_API_KEY?.length) {
         etherscan.apiKey.mainnet = ETHERSCAN_API_KEY;
         // etherscan.apiKey.sepolia = ETHERSCAN_API_KEY; // unsupported somehow
         etherscan.apiKey.goerli = ETHERSCAN_API_KEY;
     }
-    if (BSCSCAN_API_KEY.length) {
+    if (BSCSCAN_API_KEY?.length) {
         etherscan.apiKey.bsc = BSCSCAN_API_KEY;
         etherscan.apiKey.bscTestnet = BSCSCAN_API_KEY;
     }
-    if (POLYGONSCAN_API_KEY.length) {
+    if (POLYGONSCAN_API_KEY?.length) {
         etherscan.apiKey.polygon = POLYGONSCAN_API_KEY;
         etherscan.apiKey.polygonMumbai = POLYGONSCAN_API_KEY;
     }
