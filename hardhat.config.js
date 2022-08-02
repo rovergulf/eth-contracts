@@ -130,9 +130,15 @@ function buildConfig() {
                     enabled: true, runs: 200
                 }
             }
-        }, defaultNetwork: 'hardhat', optimizer: true, networks, etherscan, paths: {
+        },
+        defaultNetwork: 'hardhat',
+        optimizer: true,
+        networks,
+        etherscan,
+        paths: {
             sources: "./contracts", tests: "./test", cache: "./cache", artifacts: "./artifacts"
-        }, gasReporter: {
+        },
+        gasReporter: {
             enabled: true, // lets inspect how much will it cost in the currency below the key
             coinmarketcap: REPORT_CURRENCY ? COINMARKETCAP_API_KEY : '', currency: 'USD'
 
