@@ -14,7 +14,6 @@ describe("ERC777 Token tests", function () {
 
         const erc777Factory = await ethers.getContractFactory('DevERC777')
         this.token = await erc777Factory.deploy([]);
-        console.info('token deployed to', this.token.address);
     });
 
     it("Should validate that deployer owns minted amount of tokens", async function () {
