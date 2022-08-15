@@ -2,7 +2,6 @@ require('dotenv').config();
 require('@nomiclabs/hardhat-waffle');
 require('@nomiclabs/hardhat-ethers');
 require("@nomiclabs/hardhat-etherscan");
-require('hardhat-abi-exporter');
 require("@nomiclabs/hardhat-web3");
 require("hardhat-gas-reporter");
 require('solidity-coverage');
@@ -115,14 +114,6 @@ function buildConfig() {
         etherscan.apiKey.polygonMumbai = POLYGONSCAN_API_KEY;
     }
 
-    let abiExporter;
-
-    if (ENABLE_ABI_EXPORTER) {
-        abiExporter = {
-            path: './abi', runOnCompile: true, clear: true, flat: true, spacing: 2, pretty: true
-        }
-    }
-
     return {
         solidity: {
             version: "0.8.9", settings: {
@@ -142,8 +133,7 @@ function buildConfig() {
             enabled: true, // lets inspect how much will it cost in the currency below the key
             coinmarketcap: REPORT_CURRENCY ? COINMARKETCAP_API_KEY : '', currency: 'USD'
 
-        },
-        abiExporter
+        }
     }
 }
 
