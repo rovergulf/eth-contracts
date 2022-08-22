@@ -38,4 +38,9 @@ describe("ERC165 Checker", function () {
     it("Should confirm ERC1155 interface", async () => {
         expect(await this.erc165.isERC1155(this.erc1155.address)).to.equal(true);
     });
+
+    // commented due
+    // it("Should confirm ERC173 interface", async () => {
+    //     expect(await this.erc165.isOwnable(this.erc721.address)).to.equal(true);
+    // });
 });

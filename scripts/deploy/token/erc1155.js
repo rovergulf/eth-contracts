@@ -4,7 +4,7 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
-const {deploy} = require("../../utils/etherscan");
+const {deploy} = require("../../utils/deploy");
 
 async function main() {
     await deploy('DevERC1155');

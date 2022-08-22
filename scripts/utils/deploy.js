@@ -42,6 +42,7 @@ async function verify(address, args, factoryName) {
 
 function contractByFactoryName(v) {
     switch (v) {
+        // token
         case 'DevERC20':
             return "contracts/tokens/ERC20.sol:DevERC20";
         case 'DevERC721':
@@ -51,6 +52,9 @@ function contractByFactoryName(v) {
         case 'DevERC1155':
             return "contracts/tokens/ERC1155.sol:DevERC1155";
         case 'DevGovernor':
+            return "contracts/common/Governance.sol:DevGovernor";
+        // introspection
+        case 'InterfaceChecker':
             return "contracts/common/Governance.sol:DevGovernor";
         default:
             return '';

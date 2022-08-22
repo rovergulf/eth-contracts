@@ -132,7 +132,6 @@ function buildConfig() {
         gasReporter: {
             enabled: true, // lets inspect how much will it cost in the currency below the key
             coinmarketcap: REPORT_CURRENCY ? COINMARKETCAP_API_KEY : '', currency: 'USD'
-
         }
     }
 }

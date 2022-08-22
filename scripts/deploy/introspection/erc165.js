@@ -2,7 +2,7 @@ const hre = require("hardhat");
 const {deploy} = require("../../utils/deploy");
 
 async function main() {
-    await deploy('DevERC20');
+    await deploy('InterfaceChecker');
 }
 
 // We recommend this pattern to be able to use async/await everywhere
