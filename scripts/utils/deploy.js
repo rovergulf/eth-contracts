@@ -55,7 +55,7 @@ function contractByFactoryName(v) {
             return "contracts/common/Governance.sol:DevGovernor";
         // introspection
         case 'InterfaceChecker':
-            return "contracts/common/Governance.sol:DevGovernor";
+            return "contracts/lib/ERC165Checker.sol:InterfaceChecker";
         default:
             return '';
     }
