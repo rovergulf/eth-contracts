@@ -10,18 +10,18 @@ contract TokenStacking is Ownable {
 
     IERC20 public immutable token;
 
-    struct User {
-        address account;
+    struct UserInfo {
+        address user;
+        uint256 expires;
         uint256 balance;
         uint256 boost;
         uint256 shares;
         uint256 lockedAt;
-        uint256 lockUntil;
         uint256 updatedAt;
         bool isLocked;
     }
 
-    mapping(address => User) locks;
+    mapping(uint256 => UserInfo) internal _users;
 
     uint256 public constant WITHDRAW_DELAY = 14 days; // 2 weeks
     uint256 public constant MIN_LOCK_DURATION = 7 days; // 1 week
