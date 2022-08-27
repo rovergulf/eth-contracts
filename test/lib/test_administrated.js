@@ -10,7 +10,7 @@ describe("Administrated", function () {
         const erc20Factory = await hre.ethers.getContractFactory("DevERC20");
         [user1, user2, user3] =
             await ethers.getSigners();
-        erc20 = await erc20Factory.deploy();
+        erc20 = await erc20Factory.deploy("TestAdministrated", "TA0");
     });
 
     it("Should confirm that user1 is an owner of Administrated contract", async () => {
