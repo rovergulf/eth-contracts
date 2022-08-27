@@ -13,34 +13,43 @@ describe("ERC165 Checker", function () {
             await ethers.getSigners();
 
         const erc165CheckerFactory = await hre.ethers.getContractFactory("InterfaceChecker");
-        // const erc20Factory = await hre.ethers.getContractFactory("DevERC20");
-        const erc721Factory = await hre.ethers.getContractFactory("DevERC721");
-        // const erc777Factory = await hre.ethers.getContractFactory("DevERC777");
-        const erc1155Factory = await hre.ethers.getContractFactory("DevERC1155");
-
-        this.erc1820 = await singletons.ERC1820Registry(user1.address);
+        const mockFactory = await hre.ethers.getContractFactory("InterfaceCheckerMock");
 
         this.erc165 = await erc165CheckerFactory.deploy();
-        // this.erc20 = await erc20Factory.deploy();
-        this.erc721 = await erc721Factory.deploy();
-        // this.erc777 = await erc777Factory.deploy([]);
-        this.erc1155 = await erc1155Factory.deploy();
+        await this.erc165.deployed();
+        this.mock = await mockFactory.deploy();
+        await this.mock.deployed();
     });
 
-    it("Should confirm that user1 is an owner of erc721", async () => {
-        expect(await this.erc721.owner()).to.equal(user1.address);
+    it("Should confirm that user1 is an owner of mock", async () => {
+        expect(await this.mock.owner()).to.equal(user1.address);
     });
 
     it("Should confirm ERC721 interface", async () => {
-        expect(await this.erc165.isERC721(this.erc721.address)).to.equal(true);
+        expect(await this.erc165.isERC721(this.mock.address)).to.equal(true);
+    });
+
+    it("Should confirm ERC721Enumerable interface", async () => {
+        expect(await this.erc165.isERC721Enumerable(this.mock.address)).to.equal(true);
     });
 
     it("Should confirm ERC1155 interface", async () => {
-        expect(await this.erc165.isERC1155(this.erc1155.address)).to.equal(true);
+        expect(await this.erc165.isERC1155(this.mock.address)).to.equal(true);
     });
 
-    // commented due
-    // it("Should confirm ERC173 interface", async () => {
-    //     expect(await this.erc165.isOwnable(this.erc721.address)).to.equal(true);
-    // });
+    it("Should confirm ERC20 interface", async () => {
+        expect(await this.erc165.isERC20(this.mock.address)).to.equal(true);
+    });
+
+    it("Should confirm ERC777 interface", async () => {
+        expect(await this.erc165.isERC777(this.mock.address)).to.equal(true);
+    });
+
+    it("Should confirm ERC5313 (Light Contract Ownership) interface", async () => {
+        expect(await this.erc165.isERC5313(this.mock.address)).to.equal(true);
+    });
+
+    it("Should confirm ERC4626 interface", async () => {
+        expect(await this.erc165.isERC4626(this.mock.address)).to.equal(true);
+    });
 });
