@@ -4,7 +4,7 @@
   "scripts": {
     "test": "npx hardhat test",
     "coverage": "npx hardhat coverage",
-    "compile": "npx hardhat copmile",
+    "compile": "npx hardhat compile",
     "start": "npx hardhat node"
   },
   "devDependencies": {
