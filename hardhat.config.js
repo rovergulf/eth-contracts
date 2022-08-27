@@ -47,7 +47,7 @@ function buildConfig() {
         hardhat: {
             mining: {
                 auto: true,
-                interval: 100
+                interval: 1000
             }
         }
     };
