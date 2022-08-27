@@ -30,6 +30,8 @@ async function deploy(factoryName, constructorArgs = []) {
     await delay(30000);
 
     await verify(erc.address, constructorArgs, factoryName);
+
+    return erc.address;
 }
 
 async function verify(address, args, factoryName) {

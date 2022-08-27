@@ -43,7 +43,14 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 
 function buildConfig() {
-    const networks = {};
+    const networks = {
+        hardhat: {
+            mining: {
+                auto: true,
+                interval: 100
+            }
+        }
+    };
 
     // ethereum
     if (MAINNET_API_URL?.length) {

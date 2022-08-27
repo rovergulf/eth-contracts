@@ -16,7 +16,7 @@ describe("DevERC20", function () {
         const erc20Factory = await hre.ethers.getContractFactory("DevERC20");
         [user1, user2, user3, user4, user5, user6] =
             await ethers.getSigners();
-        erc20 = await erc20Factory.deploy();
+        erc20 = await erc20Factory.deploy("TestTokenZero", "TT0");
 
 
         // deploy contracts

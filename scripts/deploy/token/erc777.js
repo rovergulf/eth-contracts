@@ -7,8 +7,7 @@ const hre = require("hardhat");
 const {deploy} = require("../../utils/deploy");
 
 async function main() {
-    await deploy('DevERC777');
-
+    await deploy('DevERC777', []);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

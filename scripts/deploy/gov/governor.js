@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 const {deploy, getDevSigners} = require("../../utils/deploy");
 
-const rinkebyAddrs = require('../../chains/rinkeby/tokens');
+const rinkebyAddrs = require('../../chains/goerli/tokens');
 const bsctestAddrs = require('../../chains/bsctest/tokens');
 
 async function main() {

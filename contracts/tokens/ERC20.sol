@@ -11,7 +11,10 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 /// @custom:security-contact team@rovergulf.net
 contract DevERC20 is ERC20, ERC20Burnable, Administrated, ERC20Permit, ERC20Votes {
 
-    constructor() ERC20("DevERC20", "RET2") ERC20Permit("DevERC20") {
+    constructor(
+        string memory name_,
+        string memory symbol_
+    ) ERC20(name_, symbol_) ERC20Permit(name_) {
     }
 
     function mint(address to, uint256 amount) public adminAccess {

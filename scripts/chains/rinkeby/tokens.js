@@ -1,3 +1,0 @@
-module.exports = {
-    erc20: '0x9D6088A9F6D0Ff45302A10C2fCE0E5A859C478a5',
-};
