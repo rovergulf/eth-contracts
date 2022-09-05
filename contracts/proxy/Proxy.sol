@@ -26,6 +26,6 @@ contract AbstractProxy is Ownable, IERC165, Proxy {
 
     // make it ERC165 compatible
     function supportsInterface(bytes4 interfaceId) public view returns (bool) {
-        return interfaceId == type(IERC165).interfaceId;
+        return interfaceId == type(IERC165).interfaceId || IERC165(_implementation()).supportsInterface(interfaceId);
     }
 }

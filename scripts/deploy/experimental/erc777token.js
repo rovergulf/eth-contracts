@@ -11,14 +11,18 @@ async function main() {
     });
     const poolAddr = ethers.utils.getContractAddress({
         from: deployer.address,
-        nonce,
+        nonce: nonce + 1,
+    });
+    const vaultAddr = ethers.utils.getContractAddress({
+        from: deployer.address,
+        nonce: nonce + 2,
     });
     const stakeAddr = ethers.utils.getContractAddress({
         from: deployer.address,
-        nonce,
+        nonce: nonce + 3,
     });
 
-    const defaultOperators = [];
+    const defaultOperators = [poolAddr, vaultAddr, stakeAddr];
 
     await deploy('RovergulfCoin', []);
 }

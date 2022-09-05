@@ -31,6 +31,7 @@ describe("Rovergulf Coin tests", function () {
         const coinFactory = await ethers.getContractFactory('RovergulfCoin');
         const poolFactory = await ethers.getContractFactory('RCPool');
         const stakeFactory = await ethers.getContractFactory('RCStake');
+        const stakeManagerFactory = await ethers.getContractFactory('RCStakingManager');
         const vestFactory = await ethers.getContractFactory('RCVest');
 
         const nonce = await user1.getTransactionCount();
@@ -39,7 +40,8 @@ describe("Rovergulf Coin tests", function () {
         const poolAddr = ethers.utils.getContractAddress({from: user1.address, nonce: nonce + 1});
         const stakeAddr = ethers.utils.getContractAddress({from: user1.address, nonce: nonce + 2});
         const vestAddr = ethers.utils.getContractAddress({from: user1.address, nonce: nonce + 3});
-        const mockAddr = ethers.utils.getContractAddress({from: user1.address, nonce: nonce + 4});
+        const stakingPoolAddr = ethers.utils.getContractAddress({from: user1.address, nonce: nonce + 4});
+        const mockAddr = ethers.utils.getContractAddress({from: user1.address, nonce: nonce + 5});
 
         const initialRecipients = [
             poolAddr, stakeAddr, user1.address, user2.address,
@@ -64,6 +66,8 @@ describe("Rovergulf Coin tests", function () {
 
         this.mock = await coinMockFactory.deploy(this.token.address);
         await this.mock.deployed();
+
+        this.stakeManager = await stakeManagerFactory.deploy('staking manager', this.token.address, this.stake.address);
     });
 
     it("Should validate that deployer (user1) owns minted amount of tokens", async function () {
