@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC1820Registry.sol";
 
 // simple treasury without shares
+/// @custom:security-contact team@rovergulf.net
 contract Treasury is Ownable {
 //    using Address for address;
     using SafeMath for uint256;

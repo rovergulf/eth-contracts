@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+/// @custom:security-contact team@rovergulf.net
 contract SimpleForwarder is Ownable {
 
     event Executed(address caller, string description);

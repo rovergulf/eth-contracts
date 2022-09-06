@@ -2,16 +2,19 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC777/IERC777.sol";
-import "@openzeppelin/contracts/token/ERC777/IERC777Recipient.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC1820Registry.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC777/IERC777.sol";
+import "@openzeppelin/contracts/token/ERC777/IERC777Recipient.sol";
 
-// Pool is an operator contract which
-contract RCPool is Ownable, IERC165 {
+import "./ERC777Token.sol";
+
+// Pool is an operator contract
+/// @custom:security-contact team@rovergulf.net
+contract RCPoolManager is Ownable, IERC165 {
     using Address for address;
     using SafeMath for uint256;
 
@@ -28,6 +31,10 @@ contract RCPool is Ownable, IERC165 {
     ) {
         _name = name;
         token = IERC777(tokenAddress);
+    }
+
+    function asCoin() internal view returns (ERC777Token) {
+        return ERC777Token(address(token));
     }
 
     function name() public view returns (string memory) {
@@ -56,12 +63,16 @@ contract RCPool is Ownable, IERC165 {
     //        Address.verifyCallResult(success, returndata, "Pool: call reverted with message");
     //    }
 
+    function mint(address recipient, uint256 amount, bytes memory operatorData) public onlyOwner {
+        asCoin().mint(recipient, amount, operatorData);
+    }
+
     function send(
         address recipient,
         uint256 amount,
-        bytes memory data
+        bytes memory userData
     ) public {
-        token.operatorSend(_msgSender(), recipient, amount, data, "");
+        token.operatorSend(_msgSender(), recipient, amount, userData, "");
         _totalTransferred = _totalTransferred.add(amount);
     }
 

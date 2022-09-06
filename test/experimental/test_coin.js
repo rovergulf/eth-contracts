@@ -29,10 +29,9 @@ describe("Rovergulf Coin tests", function () {
         await singletons.ERC1820Registry(user1.address);
         const coinMockFactory = await ethers.getContractFactory('CoinMock');
         const coinFactory = await ethers.getContractFactory('RovergulfCoin');
-        const poolFactory = await ethers.getContractFactory('RCPool');
+        const poolFactory = await ethers.getContractFactory('RCPoolManager');
         const stakeFactory = await ethers.getContractFactory('RCStake');
-        const stakeManagerFactory = await ethers.getContractFactory('RCStakingManager');
-        const vestFactory = await ethers.getContractFactory('RCVest');
+        const vestFactory = await ethers.getContractFactory('RCVault');
 
         const nonce = await user1.getTransactionCount();
 
@@ -40,7 +39,6 @@ describe("Rovergulf Coin tests", function () {
         const poolAddr = ethers.utils.getContractAddress({from: user1.address, nonce: nonce + 1});
         const stakeAddr = ethers.utils.getContractAddress({from: user1.address, nonce: nonce + 2});
         const vestAddr = ethers.utils.getContractAddress({from: user1.address, nonce: nonce + 3});
-        const stakingPoolAddr = ethers.utils.getContractAddress({from: user1.address, nonce: nonce + 4});
         const mockAddr = ethers.utils.getContractAddress({from: user1.address, nonce: nonce + 5});
 
         const initialRecipients = [
@@ -66,8 +64,6 @@ describe("Rovergulf Coin tests", function () {
 
         this.mock = await coinMockFactory.deploy(this.token.address);
         await this.mock.deployed();
-
-        this.stakeManager = await stakeManagerFactory.deploy('staking manager', this.token.address, this.stake.address);
     });
 
     it("Should validate that deployer (user1) owns minted amount of tokens", async function () {
@@ -81,13 +77,13 @@ describe("Rovergulf Coin tests", function () {
     });
 
     it("Should mint additional tokens for user6", async function () {
-        await this.mock.mint(user6.address, mintAmount, []);
+        await this.pool.mint(user6.address, mintAmount, []);
         const balance = await this.token.balanceOf(user6.address);
         expect(balance).to.equal(mintAmount);
     });
 
     it("Should not let mint more than max limit set", async function () {
-        await expect(this.mock.mint(user4.address, maxLimitMint, []))
+        await expect(this.pool.mint(user4.address, maxLimitMint, []))
             .to.be.revertedWith('Amount exceeds token mint limit');
     });
 
