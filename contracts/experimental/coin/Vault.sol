@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/utils/introspection/IERC1820Registry.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 /// @custom:security-contact team@rovergulf.net
+// Rovergulf Coin Vault is an escrow contract which unlocks deposits by
 contract RCVault is Ownable, IERC165, IERC777Recipient {
     using SafeMath for uint256;
     using Counters for Counters.Counter;

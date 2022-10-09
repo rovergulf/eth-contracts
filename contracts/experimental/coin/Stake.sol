@@ -23,24 +23,20 @@ contract RCStake is Ownable, IERC165, IERC777Recipient {
     struct Balance {
         uint256 amount;
         uint256 start;
-        uint256 expires;
         uint256 boost;
         uint256 nonce;
+        uint256 lockedUntil;
         bool lock;
     }
 
     mapping(address => Balance) _balances;
     uint256 private _available; // reward amount
     uint256 private _deposited; // total deposit amount
-    uint256 private _maxLock; // most high lock timestamp
-    uint256 private _totalBoostDebt; // total boost reward amount as dept
-    uint256 private _totalWeight; // total deposit weight
+    uint256 private _totalBoostDebt; // total boost reward amount as debt
 
     // internal values
-    uint256 public lockedWithdrawFee = 25; // takes out 25% of profits due lock break
+    uint256 public lockedWithdrawFee = 25; // takes out 25% of profits due lock break, which funds boost rewards
     uint256 public minDepositAmount = 1 ether;
-    uint256 public minLockDelay = 7 days;
-    uint256 public maxLockDelay = 1000 days;
 
     constructor(
         string memory name_,
@@ -66,78 +62,49 @@ contract RCStake is Ownable, IERC165, IERC777Recipient {
         return token.balanceOf(address(this));
     }
 
+    function totalWeight() public view returns (uint256) {
+        return 0;
+    }
+
     function account(address account) public view returns (Balance memory) {
         return _balances[account];
     }
 
-    function _accountWeight(address account) internal view returns (uint256) {
-        return _balances[account].amount.div(_balances[account].expires);
+    function accountWeight(address account) public view returns (uint256) {
+        uint256 lockDuration = block.timestamp.sub(_balances[account].start);
+        return _balances[account].amount.div(lockDuration);
     }
 
     function computeShares(address account) public view returns (uint256) {
-        return _available.mul(_accountWeight(account).div(_deposited));
+        return _available.div(totalWeight().div(accountWeight(account)));
     }
 
-    function updateShares(address account, uint256 amount) internal {
-        Balance storage account = _balances[_msgSender()];
-
-        if (account.amount > 0) {
-
+    function computeReward(address account) public view returns (uint256) {
+        Balance storage b = _balances[account];
+        if (b.amount == 0) {
+            return 0;
         }
+
+        uint256 shares = computeShares(account);
+        return b.amount.add(shares);
     }
 
-    function deposit(uint256 amount, uint256 expiresIn) public {
+    function deposit(uint256 amount) public {
         require(amount > minDepositAmount, "Not meets the minimal limit");
-        require(expiresIn >= minLockDelay, "At least 7 days of expire time is required");
-        require(expiresIn <= maxLockDelay, "Expire time exceeds limit");
-        Balance storage b = _balances[_msgSender()];
+        address account = _msgSender();
+        Balance storage b = _balances[account];
 
-        if (b.lock) {
-            require(block.timestamp.add(expiresIn) >= b.expires, "Invalid expire period");
-
-            if (expiresIn > _maxLock) {
-                _maxLock = expiresIn;
-            }
-        } else {
-            _balances[_msgSender()].start = block.timestamp;
-        }
-
-        if (b.amount > 0) {
-            uint256 currentWeight = _accountWeight(_msgSender());
-            _totalWeight = _totalWeight.add(currentWeight);
-        } else {
-            _totalWeight = _totalWeight.add(_accountWeight(_msgSender()));
-        }
-
+        token.operatorSend(account, address(this), amount, "", "");
         if (b.start == 0) {
-            b.start = block.timestamp;
-        } else {
-//            if (b.start + b.expires) {}
+            _balances[account].start = block.timestamp;
         }
-
-        token.operatorSend(_msgSender(), address(this), amount, "", abi.encode(expiresIn));
-        _balances[_msgSender()].amount = b.amount.add(amount);
-        _balances[_msgSender()].expires = block.timestamp + expiresIn;
-    }
-
-    function lock(uint256 expiresIn) public virtual {
-        require(expiresIn >= minLockDelay, "At least 7 days of expire time is required");
-        require(expiresIn <= maxLockDelay, "Expire time exceeds limit of 1000 days");
-
-        Balance storage b = _balances[_msgSender()];
-        require(expiresIn >= b.expires, "Invalid expire period");
-        if (expiresIn > _maxLock) {
-            _maxLock = expiresIn;
-        }
-
-        _balances[_msgSender()].lock = true;
-        _balances[_msgSender()].boost = expiresIn;
-        _balances[_msgSender()].expires = expiresIn;
+        _balances[account].amount = b.amount.add(amount);
+        _balances[account].nonce++;
     }
 
     function withdraw() public virtual {
-        Balance storage b = _balances[_msgSender()];
-
+        address account = _msgSender();
+        Balance storage b = _balances[account];
     }
 
     function tokensReceived(
