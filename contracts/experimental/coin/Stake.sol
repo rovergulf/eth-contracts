@@ -109,11 +109,11 @@ contract RCStake is Ownable, IERC165, IERC777Recipient {
 
     function tokensReceived(
         address operator,
-        address from,
-        address to,
+        address,
+        address,
         uint256 amount,
-        bytes calldata userData,
-        bytes calldata operatorData
+        bytes calldata,
+        bytes calldata
     ) public virtual {
         if (operator == address(this)) {
             _deposited = _deposited.add(amount);

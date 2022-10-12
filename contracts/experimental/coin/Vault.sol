@@ -161,10 +161,10 @@ contract RCVault is Ownable, IERC165, IERC777Recipient {
 
     function tokensReceived(
         address operator,
-        address from,
-        address to,
+        address,
+        address,
         uint256 amount,
-        bytes memory userData,
+        bytes memory,
         bytes memory operatorData
     ) public virtual {
         require(operator == _operator, "Only can be called by vesting operator");
