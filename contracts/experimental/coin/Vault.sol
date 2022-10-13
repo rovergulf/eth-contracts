@@ -101,16 +101,16 @@ contract RCVault is Ownable, IERC165, IERC777Recipient {
     function depositUnlockedAmount(uint256 id) internal view returns (uint256) {
         Deposit storage d = _deposits[id];
 
-        uint256 now = block.timestamp;
+        uint256 currentTime = block.timestamp;
 
         uint256 lockUntil = d.start.add(d.lock);
-        if (now < lockUntil) {
+        if (currentTime < lockUntil) {
             return 0;
         }
 
         uint256 expiresAt = lockUntil.add(d.period);
-        if (now < expiresAt) {
-            uint256 timeDiff = now.sub(lockUntil);
+        if (currentTime < expiresAt) {
+            uint256 timeDiff = currentTime.sub(lockUntil);
             uint256 partDelay = d.period.div(d.parts);
             uint256 partsCompleted = timeDiff.div(partDelay);
             uint256 perPartTokenAmount = d.amount.div(d.parts);
@@ -188,7 +188,7 @@ contract RCVault is Ownable, IERC165, IERC777Recipient {
     }
 
     // make it ERC165 compatible
-    function supportsInterface(bytes4 interfaceId) public view returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public pure returns (bool) {
         return interfaceId == type(IERC165).interfaceId ||
         //        interfaceId == type(Vault).interfaceId ||
         interfaceId == type(IERC777Recipient).interfaceId;

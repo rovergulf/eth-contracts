@@ -29,8 +29,8 @@ contract RCStake is Ownable, IERC165, IERC777Recipient {
         bool lock;
     }
 
-    mapping(address => Balance) _balances;
-    uint256 private _available; // reward amount
+    mapping(address => Balance) private _balances;
+    uint256 private _reward; // reward amount
     uint256 private _deposited; // total deposit amount
     uint256 private _totalBoostDebt; // total boost reward amount as debt
 
@@ -51,7 +51,7 @@ contract RCStake is Ownable, IERC165, IERC777Recipient {
     }
 
     function available() public view returns (uint256) {
-        return _available;
+        return _reward;
     }
 
     function deposited() public view returns (uint256) {
@@ -66,39 +66,39 @@ contract RCStake is Ownable, IERC165, IERC777Recipient {
         return 0;
     }
 
-    function account(address account) public view returns (Balance memory) {
-        return _balances[account];
+    function accountBalance(address account_) public view returns (Balance memory) {
+        return _balances[account_];
     }
 
-    function accountWeight(address account) public view returns (uint256) {
-        uint256 lockDuration = block.timestamp.sub(_balances[account].start);
-        return _balances[account].amount.div(lockDuration);
+    function accountWeight(address account_) public view returns (uint256) {
+        uint256 lockDuration = block.timestamp.sub(_balances[account_].start);
+        return _balances[account_].amount.div(lockDuration);
     }
 
-    function computeShares(address account) public view returns (uint256) {
-        return _available.div(totalWeight().div(accountWeight(account)));
+    function computeShares(address account_) public view returns (uint256) {
+        return _reward.div(totalWeight().div(accountWeight(account_)));
     }
 
-    function computeReward(address account) public view returns (uint256) {
-        Balance storage b = _balances[account];
+    function computeReward(address account_) public view returns (uint256) {
+        Balance storage b = _balances[account_];
         if (b.amount == 0) {
             return 0;
         }
 
-        uint256 shares = computeShares(account);
+        uint256 shares = computeShares(account_);
         return b.amount.add(shares);
     }
 
-    function deposit(uint256 amount) public {
-        require(amount > minDepositAmount, "Not meets the minimal limit");
+    function deposit(uint256 amount_) public {
+        require(amount_ > minDepositAmount, "Not meets the minimal limit");
         address account = _msgSender();
         Balance storage b = _balances[account];
 
-        token.operatorSend(account, address(this), amount, "", "");
+        token.operatorSend(account, address(this), amount_, "", "");
         if (b.start == 0) {
             _balances[account].start = block.timestamp;
         }
-        _balances[account].amount = b.amount.add(amount);
+        _balances[account].amount = b.amount.add(amount_);
         _balances[account].nonce++;
     }
 
@@ -118,12 +118,12 @@ contract RCStake is Ownable, IERC165, IERC777Recipient {
         if (operator == address(this)) {
             _deposited = _deposited.add(amount);
         } else if (operator == _operator) {
-            _available = _available.add(amount);
+            _reward = _reward.add(amount);
         }
     }
 
     // make it ERC165 compatible
-    function supportsInterface(bytes4 interfaceId) public view returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public pure returns (bool) {
         return interfaceId == type(IERC165).interfaceId ||
         interfaceId == type(IERC777Recipient).interfaceId;
     }

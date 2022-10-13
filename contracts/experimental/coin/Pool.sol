@@ -26,10 +26,10 @@ contract RCPoolManager is Ownable, IERC165 {
     event Released(address user, uint256 amount);
 
     constructor(
-        string memory name,
+        string memory name_,
         address tokenAddress
     ) {
-        _name = name;
+        _name = name_;
         token = IERC777(tokenAddress);
     }
 
