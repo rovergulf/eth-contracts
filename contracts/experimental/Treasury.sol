@@ -52,10 +52,10 @@ contract Treasury is Ownable {
     function tokensReceived(
         address operator,
         address from,
-        address to,
+        address,
         uint256 amount,
-        bytes calldata userData,
-        bytes calldata operatorData
+        bytes calldata,
+        bytes calldata
     ) public virtual {
         emit TokenReceived(operator, from, amount);
     }
