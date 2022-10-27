@@ -13,8 +13,9 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 
 /// @custom:security-contact team@rovergulf.net
-contract LibExchange is Ownable, EIP712 {
+abstract contract LibExchange is Ownable, EIP712 {
     using ECDSA for bytes32;
+    using SignatureChecker for address;
     using SafeMath for uint256;
 
     uint256 private feeDenominator = 10000;
@@ -26,6 +27,7 @@ contract LibExchange is Ownable, EIP712 {
     constructor() EIP712("NFTExchange", "v1") {}
 
     enum TokenInterface {
+        ZeroTokenInterface,
         ERC721,
         ERC1155
     }
@@ -41,24 +43,6 @@ contract LibExchange is Ownable, EIP712 {
         uint256 value;
         address[] feeRecipients;
         uint256[] feeAmounts;
-    }
-
-    function _atomicMatch(
-        Order memory sell,
-        Order memory buy,
-        bytes memory sellSignature,
-        bytes memory buySignature
-    ) internal {
-        bytes32 sellHash = _hashTypedData(sell);
-        bytes32 buyHash = _hashTypedData(buy);
-
-        require(SignatureChecker.isValidSignatureNow(sell.maker, sellHash, sellSignature), "Invalid sell order signature");
-        require(SignatureChecker.isValidSignatureNow(buy.maker, buyHash, buySignature), "Invalid buy order signature");
-
-        _transferOrderFunds(buy.maker, sell.token, sell.value, sell.feeRecipients, sell.feeAmounts);
-        _transferOrderNFTs(sell.tokenInterface, sell.nftAddress, sell.nftTokenId, sell.nftAmount, sell.maker, buy.maker);
-
-        emit Match(_msgSender(), sellHash, buyHash);
     }
 
     function _hashTypedData(Order memory order) internal view returns (bytes32) {
@@ -117,6 +101,10 @@ contract LibExchange is Ownable, EIP712 {
         return (true, "");
     }
 
+    function _validateSignature(address signer, bytes32 hash, bytes memory sig) internal view returns (bool) {
+        return signer.isValidSignatureNow(hash.toEthSignedMessageHash(), sig) || signer.isValidSignatureNow(hash, sig);
+    }
+
     // transfers funds
     function _transferOrderFunds(
         address from,
@@ -158,5 +146,23 @@ contract LibExchange is Ownable, EIP712 {
         } else if (tokenInterface == TokenInterface.ERC1155) {
             IERC1155(nftAddress).safeTransferFrom(from, recipient, nftTokenId, nftAmount, "");
         }
+    }
+
+    function _atomicMatch(
+        Order memory sell,
+        Order memory buy,
+        bytes memory sellSignature,
+        bytes memory buySignature
+    ) internal {
+        bytes32 sellHash = _hashTypedData(sell);
+        bytes32 buyHash = _hashTypedData(buy);
+
+        require(_validateSignature(sell.maker, sellHash, sellSignature), "Invalid sell order signature");
+        require(_validateSignature(buy.maker, buyHash, buySignature), "Invalid buy order signature");
+
+        _transferOrderFunds(buy.maker, sell.token, sell.value, sell.feeRecipients, sell.feeAmounts);
+        _transferOrderNFTs(sell.tokenInterface, sell.nftAddress, sell.nftTokenId, sell.nftAmount, sell.maker, buy.maker);
+
+        emit Match(_msgSender(), sellHash, buyHash);
     }
 }

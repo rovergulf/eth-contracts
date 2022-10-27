@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 import "./LibExchange.sol";
 
 /// @custom:security-contact team@rovergulf.net
-contract Exchange is LibExchange {
+contract NFTExchange is LibExchange {
 
     function name() public pure returns (string memory) {
         return "Rovergulf NFT Exchange";
@@ -19,7 +19,7 @@ contract Exchange is LibExchange {
         _atomicMatch(sell, buy, sellSignature, buySignature);
     }
 
-    function hashTypedData(Order memory order) external view returns (bytes32) {
+    function hashOrder(Order memory order) external view returns (bytes32) {
         return _hashTypedData(order);
     }
 
