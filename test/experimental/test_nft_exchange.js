@@ -16,6 +16,7 @@ const tokenInterfaceErc721 = 1;
 const tokenInterfaceErc1155 = 2;
 
 const fixedPrice1 = ethers.utils.parseEther('10');
+const fixedPrice2 = ethers.utils.parseEther('100');
 
 describe("Exchange tests", function () {
     let user1, user2, user3, user4, user5, user6, user7, user8;
@@ -58,6 +59,7 @@ describe("Exchange tests", function () {
         await this.erc1155.mint(user3.address, 2, 10, []);
         await this.erc1155.mint(user3.address, 2, 5, []);
         await this.erc1155.mint(user4.address, 3, 1, []);
+        await this.erc1155.mint(user5.address, 3, 10, []);
     });
 
     it("Should validate that exchange has owner", async function () {
@@ -75,7 +77,7 @@ describe("Exchange tests", function () {
         expect(balance).to.equal(mintAmount);
     });
 
-    it("Should revert with ERC721 caller not approved", async function () {
+    it("Should revert with: 'ERC721: caller is not token owner nor approved'", async function () {
         const sellOrder2 = {
             maker: user2.address,
             taker: ZERO_ADDRESS,
@@ -111,7 +113,7 @@ describe("Exchange tests", function () {
         await expect(this.exchange.atomicMatch(sellOrder2, buyOrder2, sellSig, buySig)).to.be.revertedWith('ERC721: caller is not token owner nor approved');
     });
 
-    it("Should execute exchange order for ETH", async function () {
+    it("Should execute exchange ERC721 order for ETH", async function () {
         const sellOrder1 = {
             maker: user2.address,
             taker: ZERO_ADDRESS,
@@ -155,7 +157,7 @@ describe("Exchange tests", function () {
         expect(balance2).to.gt(sellerFee);
     });
 
-    it("Should execute exchange order for testTokenTwo", async function () {
+    it("Should execute exchange ERC721 order for testTokenTwo", async function () {
         const sellOrder3 = {
             maker: user2.address,
             taker: ZERO_ADDRESS,
@@ -191,14 +193,14 @@ describe("Exchange tests", function () {
         await this.erc721.connect(user2).approve(this.exchange.address, 1);
         await this.tokenTwo.connect(user4).approve(this.exchange.address, fixedPrice1);
 
-        await this.exchange.connect(user4).atomicMatch(sellOrder3, buyOrder3, sellSig, buySig, {value: fixedPrice1});
+        await this.exchange.connect(user4).atomicMatch(sellOrder3, buyOrder3, sellSig, buySig);
 
         const sellerFee = ethers.utils.parseEther('9.75');
         const balance3 = await this.tokenTwo.balanceOf(user2.address);
         expect(balance3).to.equal(sellerFee);
     });
 
-    it("Should revert with ERC20 wrong allowance", async function () {
+    it("Should revert ERC721 order with: 'ERC20 insufficient allowance'", async function () {
         const sellOrder2 = {
             maker: user2.address,
             taker: ZERO_ADDRESS,
@@ -234,6 +236,130 @@ describe("Exchange tests", function () {
         await this.erc721.connect(user2).approve(this.exchange.address, 1);
 
         await expect(this.exchange.atomicMatch(sellOrder2, buyOrder2, sellSig, buySig)).to.be.revertedWith('ERC20: insufficient allowance');
+    });
+
+    it("Should execute exchange ERC1155 order for testTokenTwo (5 tokens transfer)", async function () {
+        const sellOrder3 = {
+            maker: user3.address,
+            taker: ZERO_ADDRESS,
+            tokenInterface: tokenInterfaceErc1155,
+            nftAddress: this.erc1155.address,
+            nftTokenId: 1,
+            nftAmount: 5,
+            token: this.tokenTwo.address,
+            value: fixedPrice2,
+            feeRecipients: [user3.address, user1.address],
+            feeAmounts: [9750, 250],
+        };
+
+        const buyOrder3 = {
+            maker: user4.address,
+            taker: user3.address,
+            tokenInterface: tokenInterfaceErc1155,
+            nftAddress: this.erc1155.address,
+            nftTokenId: 1,
+            nftAmount: 5,
+            token: this.tokenTwo.address,
+            value: fixedPrice2,
+            feeRecipients: [user3.address, user1.address],
+            feeAmounts: [9750, 250],
+        };
+
+        const sellHash = await this.exchange.hashOrder(sellOrder3);
+        const buyHash = await this.exchange.hashOrder(buyOrder3);
+
+        const sellSig = await user3.signMessage(ethers.utils.arrayify(sellHash));
+        const buySig = await user4.signMessage(ethers.utils.arrayify(buyHash));
+
+        await this.erc1155.connect(user3).setApprovalForAll(this.exchange.address, true);
+        await this.tokenTwo.connect(user4).approve(this.exchange.address, fixedPrice2);
+
+        await this.exchange.connect(user4).atomicMatch(sellOrder3, buyOrder3, sellSig, buySig);
+
+        const sellerFee = ethers.utils.parseEther('97.5').add(mintAmount);
+        const balance3 = await this.tokenTwo.balanceOf(user3.address);
+        expect(balance3).to.equal(sellerFee);
+    });
+
+    it("Should revert with: 'ERC1155: caller is not token owner nor approved'", async function () {
+        const sellOrder3 = {
+            maker: user3.address,
+            taker: ZERO_ADDRESS,
+            tokenInterface: tokenInterfaceErc1155,
+            nftAddress: this.erc1155.address,
+            nftTokenId: 1,
+            nftAmount: 5,
+            token: this.tokenTwo.address,
+            value: fixedPrice2,
+            feeRecipients: [user3.address, user1.address],
+            feeAmounts: [9750, 250],
+        };
+
+        const buyOrder3 = {
+            maker: user4.address,
+            taker: user3.address,
+            tokenInterface: tokenInterfaceErc1155,
+            nftAddress: this.erc1155.address,
+            nftTokenId: 1,
+            nftAmount: 5,
+            token: this.tokenTwo.address,
+            value: fixedPrice2,
+            feeRecipients: [user3.address, user1.address],
+            feeAmounts: [9750, 250],
+        };
+
+        const sellHash = await this.exchange.hashOrder(sellOrder3);
+        const buyHash = await this.exchange.hashOrder(buyOrder3);
+
+        const sellSig = await user3.signMessage(ethers.utils.arrayify(sellHash));
+        const buySig = await user4.signMessage(ethers.utils.arrayify(buyHash));
+
+        // await this.erc1155.connect(user3).setApprovalForAll(this.exchange.address, true);
+        await this.tokenTwo.connect(user4).approve(this.exchange.address, fixedPrice2);
+
+        await expect(this.exchange.connect(user4).atomicMatch(sellOrder3, buyOrder3, sellSig, buySig)).to.be.revertedWith('ERC1155: caller is not token owner nor approved');
+    });
+
+    it("Should execute exchange ERC1155 order for testTokenOne (6 tokens transfer)", async function () {
+        const sellOrder3 = {
+            maker: user5.address,
+            taker: ZERO_ADDRESS,
+            tokenInterface: tokenInterfaceErc1155,
+            nftAddress: this.erc1155.address,
+            nftTokenId: 3,
+            nftAmount: 6,
+            token: this.tokenOne.address,
+            value: fixedPrice2,
+            feeRecipients: [user5.address, user1.address],
+            feeAmounts: [9750, 250],
+        };
+
+        const buyOrder3 = {
+            maker: user2.address,
+            taker: user5.address,
+            tokenInterface: tokenInterfaceErc1155,
+            nftAddress: this.erc1155.address,
+            nftTokenId: 3,
+            nftAmount: 6,
+            token: this.tokenOne.address,
+            value: fixedPrice2,
+            feeRecipients: [user5.address, user1.address],
+            feeAmounts: [9750, 250],
+        };
+
+        const sellHash = await this.exchange.hashOrder(sellOrder3);
+        const buyHash = await this.exchange.hashOrder(buyOrder3);
+
+        const sellSig = await user5.signMessage(ethers.utils.arrayify(sellHash));
+        const buySig = await user2.signMessage(ethers.utils.arrayify(buyHash));
+
+        await this.erc1155.connect(user5).setApprovalForAll(this.exchange.address, true);
+        await this.tokenOne.connect(user2).approve(this.exchange.address, fixedPrice2);
+
+        await this.exchange.atomicMatch(sellOrder3, buyOrder3, sellSig, buySig);
+
+        const balance6 = await this.erc1155.balanceOf(user2.address, 3);
+        expect(balance6).to.equal(BigNumber.from('6'));
     });
 
 });
