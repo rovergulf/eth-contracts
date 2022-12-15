@@ -58,6 +58,9 @@ function contractByFactoryName(v) {
         // introspection
         case 'InterfaceChecker':
             return "contracts/lib/ERC165Checker.sol:InterfaceChecker";
+        // experimental
+        case 'SimpleForwarder':
+            return "contracts/experimental/SimpleForwarder.sol:SimpleForwarder";
         default:
             return '';
     }

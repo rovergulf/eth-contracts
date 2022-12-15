@@ -46,7 +46,6 @@ contract DevERC721 is ERC721, ERC721Enumerable, ERC721Burnable, Administrated, E
         return _baseUri;
     }
 
-
     // The following functions are overrides required by Solidity.
     function _beforeTokenTransfer(
         address from,

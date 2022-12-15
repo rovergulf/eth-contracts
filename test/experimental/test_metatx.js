@@ -15,7 +15,7 @@ describe("MetaTransaction tests", function () {
     beforeEach(async function () {
         [user1, user2, user3, user4, user5, user6, user7, user8] = await hre.ethers.getSigners();
 
-        await singletons.ERC1820Registry(user1.address);
+        // await singletons.ERC1820Registry(user1.address);
         const erc20Factory = await ethers.getContractFactory('DevERC20');
         const registryFactory = await ethers.getContractFactory('MetaTxRegistry');
         const forwarderFactory = await ethers.getContractFactory('MetaForwarder');
