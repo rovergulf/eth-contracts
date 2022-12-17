@@ -13,7 +13,7 @@ describe("GenerativeERC721 tests", function () {
         [user1, user2, user3, user4, user5, user6] =
             await ethers.getSigners();
 
-        this.erc721 = await erc721Factory.deploy("MyNFT_ERC721", "MNE7");
+        this.erc721 = await erc721Factory.deploy("MyNFT_ERC721", "MNE7", 100);
         await this.erc721.deployed();
 
         this.claimFactory = await claim721Factory.deploy(this.erc721.address);

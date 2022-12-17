@@ -20,7 +20,7 @@ contract GenerativeERC721 is Ownable, AccessControl, ERC721, ERC721Enumerable, I
     string private _contractUri;
 
 
-    uint256 private _maxSupply = 250;
+    uint256 private _maxSupply;
     Counters.Counter private _tokenIdCounter;
 
     event Mint(address to, uint256 tokenId);
@@ -32,13 +32,15 @@ contract GenerativeERC721 is Ownable, AccessControl, ERC721, ERC721Enumerable, I
 
     constructor(
         string memory name_,
-        string memory symbol_
+        string memory symbol_,
+        uint256 maxSupply_
     ) ERC721(name_, symbol_) {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
+        _maxSupply = maxSupply_;
     }
 
-    function maxSupply() external view returns (uint256) {
+    function maxTotalSupply() external view returns (uint256) {
         return _maxSupply;
     }
 
