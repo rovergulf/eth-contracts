@@ -33,18 +33,28 @@ abstract contract LibExchange is Ownable, EIP712 {
     }
 
     struct Order {
+        // who placed the order
         address maker;
+        // reserve for
         address taker;
+        // ERC721 or ERC1155
         TokenInterface tokenInterface;
+        // address of nft contract
         address nftAddress;
+        // nft token id
         uint256 nftTokenId;
+        // nft token amount (erc1155 only)
         uint256 nftAmount;
+        // payment token, zero address if to use native network token, like ETH or BNB
         address token;
+        // token value amount
         uint256 value;
+        // fees are free to fill
         address[] feeRecipients;
         uint256[] feeAmounts;
     }
 
+    // type hash order
     function _hashTypedData(Order memory order) internal view returns (bytes32) {
         return _hashTypedDataV4(keccak256(abi.encode(
                 keccak256("Order(address maker,address taker,TokenInterface tokenInterface,address nftAddress,uint256 nftTokenId,uint256 nftAmount,address token,uint256 value)"),
@@ -59,6 +69,7 @@ abstract contract LibExchange is Ownable, EIP712 {
             )));
     }
 
+    // verified sell order ownership
     function _verifySellOrder(Order memory order) internal view returns (bool, string memory) {
         if (order.tokenInterface == TokenInterface.ERC721) {
             if (IERC721(order.nftAddress).ownerOf(order.nftTokenId) != order.maker) {
@@ -84,6 +95,7 @@ abstract contract LibExchange is Ownable, EIP712 {
         return (true, "");
     }
 
+    // verifies buy order allowance and balance
     function _verifyBuyOrder(Order memory order) internal view returns (bool, string memory) {
         if (order.token != address(0)) {
             if (!_allowedTokens[order.token]) {
@@ -101,6 +113,7 @@ abstract contract LibExchange is Ownable, EIP712 {
         return (true, "");
     }
 
+    // check if signature valid
     function _validateSignature(address signer, bytes32 hash, bytes memory sig) internal view returns (bool) {
         return signer.isValidSignatureNow(hash.toEthSignedMessageHash(), sig) || signer.isValidSignatureNow(hash, sig);
     }
@@ -148,6 +161,7 @@ abstract contract LibExchange is Ownable, EIP712 {
         }
     }
 
+    // match orders, transfer NFTs and tokens
     function _atomicMatch(
         Order memory sell,
         Order memory buy,
