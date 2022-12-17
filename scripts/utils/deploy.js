@@ -61,6 +61,8 @@ function contractByFactoryName(v) {
         // experimental
         case 'SimpleForwarder':
             return "contracts/experimental/SimpleForwarder.sol:SimpleForwarder";
+        case 'NFTExchange':
+            return "contracts/experimental/nft_exchange/NFTExchange.sol:NFTExchange";
         default:
             return '';
     }

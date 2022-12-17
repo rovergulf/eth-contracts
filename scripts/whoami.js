@@ -9,6 +9,11 @@ async function main() {
     console.log(`ChainID: ${chainId}`);
     console.log(`Deployer: ${deployer.address}`);
     console.log(`Balance: ${hre.ethers.utils.formatEther(balance)}`);
+
+    const netResults = await deployer.provider.getNetwork();
+    const gasPrice = await deployer.provider.getGasPrice();
+    console.log(`Network: ${netResults.chainId} / ${netResults.name}`)
+    console.log(`Gas price: ${gasPrice.toString()} Wei / ${hre.ethers.utils.formatUnits(gasPrice, 'gwei')} GWei`);
 }
 
 main()
